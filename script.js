@@ -1,5 +1,6 @@
 let humanScore = 0;
 let computerScore = 0;
+let playing = true;
 
 function getComputerChoice() {
   choices = ["rock", "paper", "scissors"];
@@ -24,44 +25,60 @@ function playRound(humanChoice, computerChoice) {
   ]);
   humanChoice = humanChoice.toLowerCase();
   if (humanChoice === computerChoice) {
-    console.log("Draw! You both played " + humanChoice + ".");
+    displayOutput("Draw! You both played " + humanChoice + ".");
   } else if (
     (choiceMap.get(humanChoice) - choiceMap.get(computerChoice) + 3) % 3 ===
     1
   ) {
     humanScore += 1;
-    console.log(
-      `You win! ${
+    displayOutput(
+      `You win! You chose ${humanChoice}, the computer chose ${computerChoice}. ${
         humanChoice[0].toUpperCase() + humanChoice.slice(1)
-      } beats ${computerChoice}`
+      } beats ${computerChoice}.`
     );
   } else {
     computerScore += 1;
-    console.log(
-      `You lose! ${
+    displayOutput(
+      `You lose! You chose ${humanChoice}, the computer chose ${computerChoice}. ${
         computerChoice[0].toUpperCase() + computerChoice.slice(1)
-      } beats ${humanChoice}`
+      } beats ${humanChoice}.`
     );
+  }
+  if (humanScore === maxScore || computerScore === maxScore) {
+    console.log("IN END GAME LOGIC");
+    playing = false;
+    let winner;
+    if (humanScore > computerScore) {
+      winner = "you";
+    } else {
+      winner = "the computer";
+    }
+    displayOutput(`Game over! The final winner is ${winner}.`);
   }
 }
 
-function playGame() {
-  for (let i = 0; i < 5; i++) {
-    computerChoice = getComputerChoice();
-    humanChoice = getHumanChoice();
+function displayOutput(output) {
+  display.textContent = output;
+  computerScoreDisplay.textContent = computerScore;
+  humanScoreDisplay.textContent = humanScore;
+}
+
+const buttons = document.querySelector("#buttons");
+
+buttons.addEventListener("click", (event) => {
+  const button = event.target;
+  const humanChoice = button.id;
+  if (humanChoice !== "buttons" && playing) {
+    const computerChoice = getComputerChoice();
     playRound(humanChoice, computerChoice);
   }
-  if (computerScore === humanScore) {
-    console.log(`Draw. You each won ${humanScore} points`);
-  } else if (computerScore > humanScore) {
-    console.log(
-      `You lose. The computer won ${computerScore} points, you won ${humanScore} points.`
-    );
-  } else {
-    console.log(
-      `You win. You won ${humanScore} points, the computer won ${computerScore} points.`
-    );
-  }
-}
+});
 
-playGame();
+function displayComputerScore() {}
+
+const computerScoreDisplay = document.querySelector("#computer-score");
+const humanScoreDisplay = document.querySelector("#human-score");
+
+const maxScore = 5;
+
+const display = document.querySelector("#output");
